@@ -5,9 +5,8 @@ This repository contains a k6 javascript module that lets you directly replay [H
 ## Usage
 
 ```js
-import {
-    HARTest
-} from 'https://github.com/martin-helmich/k6-har/releases/download/v1.0.0/k6-har.js';
+// check the Github releases page for the latest release
+import HARDocument from 'https://github.com/martin-helmich/k6-har/releases/download/v0.1.1/k6-har.js';
 
 export const options = {
     // relevant, since resources will be requested in batches
