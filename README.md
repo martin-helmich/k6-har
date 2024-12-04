@@ -28,10 +28,10 @@ export const options = {
     }
 };
 
-let indexHar = HARTest.fromFile("example.har");
+let indexHar = HARDocument.fromFile("example.har");
 
 export default function() {
-    indexHar.run();
+    indexHar.executeRequest();
 }
 
 ```
