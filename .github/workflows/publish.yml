@@ -1,0 +1,26 @@
+name: Publish bundle
+
+on:
+  push:
+    tags: ['*']
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Use Node.js 22.x
+      uses: actions/setup-node@v4
+      with:
+        node-version: 22.x
+
+    - name: Bundle
+      run: |
+        yarn
+        yarn build
+
+    - name: Create release
+      run: |
+        gh release create --generate-notes ${GITHUB_REF##*/} ./dist/*.js
