@@ -1,1 +1,3 @@
-export * from "./har.js";
+import HARDocument from "./har";
+
+export default HARDocument;
