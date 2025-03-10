@@ -1,6 +1,7 @@
 import {Entry, Har} from "har-format";
 import http, {AuthMethod, RefinedParams, RefinedResponse, ResponseType} from 'k6/http';
 import {SharedArray} from "k6/data";
+import {check} from "k6";
 
 export interface HARDocumentRequestOptions {
 
@@ -28,6 +29,8 @@ export interface HARDocumentRequestOptions {
      * Authentication method; will be passed through to request options.
      */
     auth?: AuthMethod;
+
+    checkResponseStatus?: boolean;
 }
 
 export interface HARDocumentResponseCollection {
@@ -128,6 +131,7 @@ export default class HARDocument {
     public executeRequest(): HARDocumentResponseCollection {
         const {documentEntry, requestParams} = this;
         const resourceType = documentEntry._resourceType ?? "unknown";
+        const expectedResponseStatus = documentEntry.response.status;
 
         const documentResponse = http.get(documentEntry.request.url, {
             ...requestParams,
@@ -136,6 +140,12 @@ export default class HARDocument {
                 resource_type: resourceType,
             },
         });
+
+        if (this.options.checkResponseStatus) {
+            check(documentResponse, {
+                [`status is ${expectedResponseStatus}`]: r => r.status === expectedResponseStatus,
+            });
+        }
 
         const resourceEntries = this.resourceEntries(documentEntry.pageref!);
         const resourceResponses = http.batch(resourceEntries.map(e => {
