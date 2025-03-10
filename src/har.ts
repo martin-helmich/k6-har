@@ -147,6 +147,10 @@ export default class HARDocument {
             });
         }
 
+        if (documentResponse.status !== expectedResponseStatus) {
+            return {documentResponse, resourceResponses: []};
+        }
+
         const resourceEntries = this.resourceEntries(documentEntry.pageref!);
         const resourceResponses = http.batch(resourceEntries.map(e => {
             return [
