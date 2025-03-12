@@ -159,6 +159,7 @@ export default class HARDocument {
                 null,
                 {
                     ...requestParams,
+                    responseType: "none",
                     tags: {
                         ...requestParams.tags,
                         resource_type: e._resourceType ?? "unknown",
