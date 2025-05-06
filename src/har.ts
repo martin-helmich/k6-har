@@ -39,6 +39,12 @@ export interface HARDocumentRequestOptions {
      */
     auth?: AuthMethod;
 
+    /**
+     * Headers that should be passed to the request. This is useful if you
+     * want to set a custom User-Agent or other headers.
+     */
+    headers?: Record<string, string>;
+
     checkResponseStatus?: boolean;
 }
 
@@ -130,11 +136,13 @@ export default class HARDocument {
 
     private get requestParams(): RefinedParams<ResponseType> {
         const {
-            auth
+            auth,
+            headers,
         } = this.options;
 
         return {
             auth,
+            headers,
         };
     }
 
