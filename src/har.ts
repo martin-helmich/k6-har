@@ -17,6 +17,15 @@ export interface HARDocumentRequestOptions {
     allowedDomains?: string[];
 
     /**
+     * Mapper function that can be used to transform the URL of a request
+     * before it is executed. This might be useful if you have HAR exports from
+     * a production site and want to run the load test against a staging site.
+     *
+     * @param string
+     */
+    transformURL?: (url: string) => string;
+
+    /**
      * Use this field to also execute unsafe requests (POST and other) that are
      * recorded in the HAR file.
      *
@@ -65,7 +74,16 @@ export default class HARDocument {
         const entries = new SharedArray(filename, () => {
             const harFile = open(filename);
             const har = JSON.parse(harFile) as Har;
-            return har.log.entries;
+            const entries = har.log.entries as Entry[];
+
+            // Transform HAR entries ahead of time, so that we don't have to do it in every VU
+            if (opts.transformURL) {
+                for (const entry of entries) {
+                    entry.request.url = opts.transformURL(entry.request.url);
+                }
+            }
+
+            return entries;
         });
 
         return new HARDocument(entries, opts);
